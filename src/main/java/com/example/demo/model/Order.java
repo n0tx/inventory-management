@@ -28,7 +28,6 @@ public class Order {
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
-    @NotBlank(message = "The number of items cannot be empty")
     @Min(value = 1, message = "The number must be greater than 0")
     private int qty;
 

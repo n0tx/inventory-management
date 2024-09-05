@@ -30,5 +30,5 @@ public class Inventory {
     private int qty;
 
     @Column(nullable = false)
-    private String tipe; // 'T' for Top Up, 'W' for Withdrawal
+    private String type; // 'T' for Top Up, 'W' for Withdrawal
 }

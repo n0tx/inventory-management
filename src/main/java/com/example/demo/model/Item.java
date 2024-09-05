@@ -23,7 +23,6 @@ public class Item {
     @NotBlank(message = "Item name cannot be empty")
     private String name;
 
-    @NotBlank(message = "Item price cannot be empty")
     @Min(value = 1, message = "Item price must be greater than 0")
     private int price;
 }
