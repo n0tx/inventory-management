@@ -29,10 +29,12 @@ public class OrderService {
         Item item = itemRepository.findById(order.getItem().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Item not found"));
 
-        Inventory stockInventoryItem = inventoryRepository.findRemainingStockByItem(item).orElseThrow(() -> new ResourceNotFoundException("Inventory for item not found"));
+        Inventory stockInventoryItem = inventoryRepository.findRemainingStockByItem(item)
+                .orElseThrow(() -> new ResourceNotFoundException("Inventory for item not found"));
 
         if (stockInventoryItem.getQty() < order.getQty()) {
-            throw new InsufficientStockException("Insufficient stock (" + stockInventoryItem.getQty() + ") for item: " + item.getName());
+            throw new InsufficientStockException(
+                    "Insufficient stock (" + stockInventoryItem.getQty() + ") for item: " + item.getName());
         }
 
         // Subtract stock from inventory
