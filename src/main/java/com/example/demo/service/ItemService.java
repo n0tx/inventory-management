@@ -7,6 +7,7 @@ import com.example.demo.repository.InventoryRepository;
 import com.example.demo.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -31,13 +32,13 @@ public class ItemService {
         return itemRepository.findAll(pageable);
     }
 
-    public List<ItemWithStock> getItemsWithStock() {
-        List<Item> items = itemRepository.findAll();
+    public Page<ItemWithStock> getItemsWithStock(Pageable pageable) {
+        Page<Item> items = itemRepository.findAll(pageable);
 
-        return items.stream().map(item -> {
+        return new PageImpl<ItemWithStock>(items.stream().map(item -> {
              Integer remainingStock = calculateRemainingStock(item);
              return new ItemWithStock(item, remainingStock);
-        }).collect(Collectors.toList());
+        }).collect(Collectors.toList()));
     }
 
     private Integer calculateRemainingStock(Item item) {

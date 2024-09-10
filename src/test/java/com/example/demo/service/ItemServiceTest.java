@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ class ItemServiceTest {
         items.add(new Item(4L, "Pencil", 3));
         items.add(new Item(5L, "Shoe", 45));
 
-        when(itemRepository.findAll()).thenReturn(items);
+        when(itemRepository.findAll(Pageable.unpaged())).thenReturn(new PageImpl<>(items));
 
         Page<Item> foundItems = itemService.getAllItems(Pageable.unpaged());
 
@@ -94,23 +95,23 @@ class ItemServiceTest {
         itemWithStocks.add(new ItemWithStock(book, inventoryBook.getQty()));
         itemWithStocks.add(new ItemWithStock(bag, inventoryBag.getQty()));
 
-        when(itemRepository.findAll()).thenReturn(items);
+        when(itemRepository.findAll(Pageable.unpaged())).thenReturn(new PageImpl<>(items));
         when(inventoryRepository.calculateRemainingStock(pen)).thenReturn(Optional.of(inventoryPen.getQty()));
         when(inventoryRepository.calculateRemainingStock(bag)).thenReturn(Optional.of(inventoryBag.getQty()));
         when(inventoryRepository.calculateRemainingStock(book)).thenReturn(Optional.of(inventoryBook.getQty()));
 
-        List<ItemWithStock> foundItemWithStocks = itemService.getItemsWithStock();
+        Page<ItemWithStock> foundItemWithStocks = itemService.getItemsWithStock(Pageable.unpaged());
 
         assertNotNull(foundItemWithStocks);
 
-        assertEquals("Pen", foundItemWithStocks.get(0).getName());
-        assertEquals(5, foundItemWithStocks.get(0).getRemainingStock());
+        assertEquals("Pen", foundItemWithStocks.getContent().get(0).getName());
+        assertEquals(5, foundItemWithStocks.getContent().get(0).getRemainingStock());
 
-        assertEquals("Book", foundItemWithStocks.get(1).getName());
-        assertEquals(10, foundItemWithStocks.get(1).getRemainingStock());
+        assertEquals("Book", foundItemWithStocks.getContent().get(1).getName());
+        assertEquals(10, foundItemWithStocks.getContent().get(1).getRemainingStock());
 
-        assertEquals("Bag", foundItemWithStocks.get(2).getName());
-        assertEquals(30, foundItemWithStocks.get(2).getRemainingStock());
+        assertEquals("Bag", foundItemWithStocks.getContent().get(2).getName());
+        assertEquals(30, foundItemWithStocks.getContent().get(2).getRemainingStock());
     }
 
     @Test

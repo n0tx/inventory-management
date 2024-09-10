@@ -32,8 +32,8 @@ public class ItemController {
     }
 
     @GetMapping("/with-stock")
-    public ResponseEntity<List<ItemWithStock>> getAllItemsWithStock() {
-        return new ResponseEntity<>(itemService.getItemsWithStock(), HttpStatus.OK);
+    public ResponseEntity<Page<ItemWithStock>> getAllItemsWithStock(@PageableDefault(size = 5) Pageable pageable) {
+        return new ResponseEntity<>(itemService.getItemsWithStock(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
