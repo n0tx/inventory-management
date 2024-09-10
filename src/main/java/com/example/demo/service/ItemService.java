@@ -6,6 +6,8 @@ import com.example.demo.model.Item;
 import com.example.demo.repository.InventoryRepository;
 import com.example.demo.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,8 +26,9 @@ public class ItemService {
         return itemRepository.save(item);
     }
 
-    public List<Item> getAllItems() {
-        return itemRepository.findAll();
+    // Method to get list of item with pagination
+    public Page<Item> getAllItems(Pageable pageable) {
+        return itemRepository.findAll(pageable);
     }
 
     public List<ItemWithStock> getItemsWithStock() {

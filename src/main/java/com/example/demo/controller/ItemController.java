@@ -4,6 +4,9 @@ import com.example.demo.dto.ItemWithStock;
 import com.example.demo.model.Item;
 import com.example.demo.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -24,8 +27,8 @@ public class ItemController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Item>> getAllItems() {
-        return new ResponseEntity<>(itemService.getAllItems(), HttpStatus.OK);
+    public ResponseEntity<Page<Item>> getAllItems(@PageableDefault(size = 5) Pageable pageable) {
+        return new ResponseEntity<>(itemService.getAllItems(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/with-stock")

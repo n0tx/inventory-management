@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,13 +59,13 @@ class ItemServiceTest {
 
         when(itemRepository.findAll()).thenReturn(items);
 
-        List<Item> foundItems = itemService.getAllItems();
+        Page<Item> foundItems = itemService.getAllItems(Pageable.unpaged());
 
         assertNotNull(foundItems);
-        assertEquals(items.size(), foundItems.size());
+        assertEquals(items.size(), foundItems.getTotalElements());
 
-        assertEquals("Pen", foundItems.get(0).getName());
-        assertEquals(5, foundItems.get(0).getPrice());
+        assertEquals("Pen", foundItems.getContent().get(0).getName());
+        assertEquals(5, foundItems.getContent().get(0).getPrice());
 
     }
 
