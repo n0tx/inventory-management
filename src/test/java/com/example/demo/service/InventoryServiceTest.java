@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,22 +80,22 @@ class InventoryServiceTest {
     }
 
     @Test
-    void TestGetAllInventories() {
+    void testGetAllInventories() {
         List<Inventory> inventories = new ArrayList<Inventory>();
 
         inventories.add(new Inventory(1L, new Item(1L, "Pen", 5), 5, "T"));
         inventories.add(new Inventory(2L, new Item(2L, "Book", 10), 10, "T"));
         inventories.add(new Inventory(3L, new Item(3L, "Bag", 30), 30, "T"));
 
-        when(inventoryRepository.findAll()).thenReturn(inventories);
+        when(inventoryRepository.findAll(Pageable.unpaged())).thenReturn(new PageImpl<>(inventories));
 
-        List<Inventory> foundInventories = inventoryService.getAllInventories();
+        Page<Inventory> foundInventories = inventoryService.getAllInventories(Pageable.unpaged());
 
         assertNotNull(foundInventories);
-        assertEquals(inventories.size(), foundInventories.size());
-        assertEquals("Pen", foundInventories.get(0).getItem().getName());
-        assertEquals(5, foundInventories.get(0).getItem().getPrice());
-        assertEquals(5, foundInventories.get(0).getQty());
+        assertEquals(inventories.size(), foundInventories.getTotalElements());
+        assertEquals("Pen", foundInventories.getContent().get(0).getItem().getName());
+        assertEquals(5, foundInventories.getContent().get(0).getItem().getPrice());
+        assertEquals(5, foundInventories.getContent().get(0).getQty());
     }
 
     @Test
