@@ -12,7 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -50,9 +55,9 @@ class OrderServiceTest {
         Order savedOrder = orderService.createOrder(order);
 
         assertNotNull(savedOrder);
-        assertEquals(5, inventory.getQty());
-        assertEquals(2, savedOrder.getQty());
-        assertEquals(10, savedOrder.getPrice()); // 2 * 5
+        assertEquals(3, inventory.getQty()); // stock (5) - order (2)
+        assertEquals(2, savedOrder.getQty()); // order (2)
+        assertEquals(10, savedOrder.getPrice()); // order (2) * itemPrice (5)
     }
 
     @Test
@@ -80,6 +85,24 @@ class OrderServiceTest {
         assertNotNull(foundOrder);
         assertEquals(1L, foundOrder.getOrderNo());
         assertEquals(2, foundOrder.getQty());
+    }
+
+    @Test
+    void testGetAllOrders() {
+        Item item = new Item(1L, "Pen", 5);
+        List<Order> orders = new ArrayList<>();
+        orders.add(new Order(1L, item, 2, 10));
+        orders.add(new Order(2L, item, 3, 15));
+
+        when(orderRepository.findAll(Pageable.unpaged())).thenReturn(new PageImpl<>(orders));
+
+        Page<Order> foundOrders = orderService.getAllOrders(Pageable.unpaged());
+
+        assertNotNull(foundOrders);
+        assertEquals(orders.size(), foundOrders.getTotalElements());
+        assertEquals("Pen", foundOrders.getContent().get(0).getItem().getName());
+        assertEquals(2, foundOrders.getContent().get(0).getQty());
+        assertEquals(10, foundOrders.getContent().get(0).getPrice());
     }
 
     @Test
